@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "./DrilldownDrawer";
 
 interface Column<T> {
   key: string;
@@ -11,9 +12,10 @@ interface Column<T> {
 interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
+  onRowClick?: (row: T) => void;
 }
 
-export function DataTable<T extends Record<string, unknown>>({ columns, data }: DataTableProps<T>) {
+export function DataTable<T extends Record<string, unknown>>({ columns, data, onRowClick }: DataTableProps<T>) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-xs">
@@ -33,7 +35,11 @@ export function DataTable<T extends Record<string, unknown>>({ columns, data }: 
         </thead>
         <tbody>
           {data.map((row, i) => (
-            <tr key={i} className="border-b border-border/50 transition-colors hover:bg-secondary/50">
+            <tr
+              key={i}
+              className={`border-b border-border/50 transition-colors hover:bg-secondary/50 ${onRowClick ? "cursor-pointer" : ""}`}
+              onClick={() => onRowClick?.(row)}
+            >
               {columns.map((col) => (
                 <td
                   key={col.key}

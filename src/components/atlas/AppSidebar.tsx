@@ -1,11 +1,12 @@
 import {
   BarChart3, Zap, Target, Heart, FlaskConical, PieChart, Settings2, ShieldCheck, Rocket, FileText,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, Briefcase, Users,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import { useRole, roleNavItems } from "@/lib/roles";
 
-const navItems = [
+const allNavItems = [
   { icon: BarChart3, label: "Executive Command", path: "/" },
   { icon: Zap, label: "Demand Engine", path: "/demand" },
   { icon: Target, label: "Pipeline Intelligence", path: "/pipeline" },
@@ -14,18 +15,24 @@ const navItems = [
   { icon: PieChart, label: "Segment Economics", path: "/segments" },
   { icon: ShieldCheck, label: "Operational Integrity", path: "/operations" },
   { icon: Rocket, label: "Expansion Signals", path: "/expansion" },
+  { icon: Briefcase, label: "My Pipeline", path: "/my-pipeline" },
+  { icon: Users, label: "My Accounts", path: "/my-accounts" },
   { icon: FileText, label: "Reports", path: "/reports" },
   { icon: Settings2, label: "Admin", path: "/admin" },
 ];
 
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const { role } = useRole();
+  const allowedPaths = roleNavItems[role];
+
+  const visibleItems = allNavItems.filter((item) => allowedPaths.includes(item.path));
 
   return (
     <nav className={`flex flex-col border-r border-border bg-sidebar transition-all duration-300 ${collapsed ? "w-14" : "w-56"}`}>
       <div className="flex-1 overflow-y-auto py-3">
         <div className="flex flex-col gap-0.5 px-2">
-          {navItems.map((item) => (
+          {visibleItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
