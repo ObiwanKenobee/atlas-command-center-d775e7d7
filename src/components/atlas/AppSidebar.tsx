@@ -10,7 +10,7 @@ const allNavItems = [
   { icon: BarChart3, label: "Executive Command", path: "/" },
   { icon: Zap, label: "Demand Engine", path: "/demand" },
   { icon: Target, label: "Pipeline Intelligence", path: "/pipeline" },
-  { icon Heart, label: "Customer Health", path: "/health" },
+  { icon: Heart, label: "Customer Health", path: "/health" },
   { icon: FlaskConical, label: "Forecast Lab", path: "/forecast" },
   { icon: PieChart, label: "Segment Economics", path: "/segments" },
   { icon: ShieldCheck, label: "Operational Integrity", path: "/operations" },
