@@ -3,10 +3,12 @@ import { WidgetCard } from "@/components/atlas/WidgetCard";
 import { PageHeader } from "@/components/atlas/PageHeader";
 import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
+import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
 import { revenueData, funnelData, segmentPerformance, healthScores } from "@/lib/mock-data";
+import { useState } from "react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell, FunnelChart, Funnel, LabelList,
+  BarChart, Bar, Cell,
 } from "recharts";
 
 const chartTooltipStyle = {
@@ -15,6 +17,8 @@ const chartTooltipStyle = {
 };
 
 export default function ExecutiveCommand() {
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <PageHeader title="Executive Command" description="Revenue performance at a glance — real-time signals, not lagging reports." />
@@ -119,7 +123,7 @@ export default function ExecutiveCommand() {
         <WidgetCard title="At-Risk Revenue" span={3}>
           <div className="space-y-2">
             {healthScores.filter(a => a.risk === "high").map(account => (
-              <div key={account.account} className="rounded border border-atlas-danger/30 bg-atlas-danger/5 p-2.5">
+              <div key={account.account} className="rounded border border-atlas-danger/30 bg-atlas-danger/5 p-2.5 cursor-pointer hover:bg-atlas-danger/10 transition-colors" onClick={() => setSelectedAccount(account)}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-foreground">{account.account}</span>
                   <span className="font-metric text-[10px] font-semibold text-atlas-danger">Score: {account.score}</span>
@@ -151,9 +155,61 @@ export default function ExecutiveCommand() {
               )},
             ]}
             data={healthScores as any}
+            onRowClick={(row: any) => setSelectedAccount(row)}
           />
         </WidgetCard>
       </div>
+
+      <DrilldownDrawer
+        open={!!selectedAccount}
+        onClose={() => setSelectedAccount(null)}
+        title={selectedAccount?.account ?? ""}
+        subtitle={`Health: ${selectedAccount?.score} · ${selectedAccount?.risk} risk`}
+      >
+        {selectedAccount && (
+          <>
+            <DrilldownSection label="Account Summary">
+              <DrilldownMetric label="ARR" value={`$${(selectedAccount.revenue / 1000).toFixed(0)}K`} delta={6} />
+              <DrilldownMetric label="Health Score" value={selectedAccount.score.toString()} delta={selectedAccount.trend === "up" ? 4 : selectedAccount.trend === "down" ? -8 : 0} />
+              <DrilldownMetric label="Risk Level" value={selectedAccount.risk} />
+              <DrilldownMetric label="Renewal Date" value={selectedAccount.renewal} />
+              <DrilldownMetric label="Trend" value={selectedAccount.trend === "up" ? "↑ Improving" : selectedAccount.trend === "down" ? "↓ Declining" : "→ Stable"} />
+            </DrilldownSection>
+            <DrilldownSection label="Risk Drivers">
+              {selectedAccount.risk === "high" ? (
+                <>
+                  <div className="flex items-center justify-between py-1 border-b border-border/30">
+                    <span className="text-xs text-foreground">Usage declining 42%</span>
+                    <span className="text-[10px] text-atlas-danger font-semibold">Critical</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-border/30">
+                    <span className="text-xs text-foreground">Sponsor inactive 21 days</span>
+                    <span className="text-[10px] text-atlas-warning font-semibold">Warning</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1">
+                    <span className="text-xs text-foreground">Support tickets up 3x</span>
+                    <span className="text-[10px] text-atlas-warning font-semibold">Warning</span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground">No critical risk drivers detected.</p>
+              )}
+            </DrilldownSection>
+            <DrilldownSection label="Recent Activity">
+              {[
+                { action: "QBR completed", date: "Mar 10" },
+                { action: "Feature request submitted", date: "Mar 5" },
+                { action: "Support ticket resolved", date: "Feb 28" },
+              ].map((a, i) => (
+                <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
+                  <span className="text-xs text-foreground">{a.action}</span>
+                  <span className="text-[10px] text-muted-foreground">{a.date}</span>
+                </div>
+              ))}
+            </DrilldownSection>
+          </>
+        )}
+      </DrilldownDrawer>
     </div>
   );
 }

@@ -3,7 +3,8 @@ import { WidgetCard } from "@/components/atlas/WidgetCard";
 import { PageHeader } from "@/components/atlas/PageHeader";
 import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
-import { healthScores } from "@/lib/mock-data";
+import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
+import { useState } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const chartTooltipStyle = {
@@ -30,6 +31,8 @@ const usageCorrelation = [
 ];
 
 export default function ExpansionSignals() {
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <PageHeader title="Strategic Expansion Signals" description="Discover which accounts are primed to grow — usage, adoption, and engagement intelligence." />
@@ -66,6 +69,7 @@ export default function ExpansionSignals() {
               )},
             ]}
             data={adoptionData as any}
+            onRowClick={(row: any) => setSelectedAccount(row)}
           />
         </WidgetCard>
 
@@ -91,7 +95,7 @@ export default function ExpansionSignals() {
         <WidgetCard title="Adoption Fingerprint" span={6}>
           <div className="space-y-3 mt-2">
             {adoptionData.slice(0, 4).map((account) => (
-              <div key={account.account} className="rounded border border-border p-2.5">
+              <div key={account.account} className="rounded border border-border p-2.5 cursor-pointer hover:bg-secondary/50 transition-colors" onClick={() => setSelectedAccount(account)}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-foreground">{account.account}</span>
                   <span className="font-metric text-[10px] text-atlas-metric">{account.modules} modules</span>
@@ -122,7 +126,10 @@ export default function ExpansionSignals() {
               { account: "GlobalEd", sponsor: "None mapped", lastActivity: "N/A", engagement: "low" },
               { account: "MediCare Plus", sponsor: "COO", lastActivity: "21 days ago", engagement: "low" },
             ].map((a) => (
-              <div key={a.account} className="flex items-center justify-between rounded border border-border p-2.5">
+              <div key={a.account} className="flex items-center justify-between rounded border border-border p-2.5 cursor-pointer hover:bg-secondary/50 transition-colors" onClick={() => {
+                const match = adoptionData.find(d => d.account === a.account);
+                if (match) setSelectedAccount({ ...match, sponsor: a.sponsor, lastActivity: a.lastActivity, engagement: a.engagement });
+              }}>
                 <div>
                   <span className="text-xs font-semibold text-foreground">{a.account}</span>
                   <p className="text-[10px] text-muted-foreground">{a.sponsor} · {a.lastActivity}</p>
@@ -136,6 +143,54 @@ export default function ExpansionSignals() {
           </div>
         </WidgetCard>
       </div>
+
+      <DrilldownDrawer
+        open={!!selectedAccount}
+        onClose={() => setSelectedAccount(null)}
+        title={selectedAccount?.account ?? ""}
+        subtitle="Expansion Intelligence"
+      >
+        {selectedAccount && (
+          <>
+            <DrilldownSection label="Adoption Overview">
+              <DrilldownMetric label="Modules Adopted" value={`${selectedAccount.modules} / 4`} />
+              <DrilldownMetric label="Adoption Depth" value={`${selectedAccount.depth}%`} delta={selectedAccount.depth > 60 ? 8 : -5} />
+              <DrilldownMetric label="Stakeholders Engaged" value={selectedAccount.stakeholders.toString()} />
+              <DrilldownMetric label="Expansion Readiness" value={selectedAccount.readiness.toString()} delta={selectedAccount.readiness > 70 ? 12 : -3} />
+            </DrilldownSection>
+            <DrilldownSection label="Module Adoption">
+              {["Core Platform", "Analytics Suite", "Automation Engine", "Integration Hub"].map((mod, i) => (
+                <div key={mod} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
+                  <span className="text-xs text-foreground">{mod}</span>
+                  <span className={`text-[10px] font-semibold ${i < selectedAccount.modules ? "text-atlas-positive" : "text-muted-foreground"}`}>
+                    {i < selectedAccount.modules ? "Active" : "Not adopted"}
+                  </span>
+                </div>
+              ))}
+            </DrilldownSection>
+            <DrilldownSection label="Expansion Signals">
+              {selectedAccount.readiness >= 70 ? (
+                <>
+                  <div className="flex items-center justify-between py-1 border-b border-border/30">
+                    <span className="text-xs text-foreground">High product engagement</span>
+                    <span className="text-[10px] text-atlas-positive font-semibold">Strong</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-border/30">
+                    <span className="text-xs text-foreground">Executive sponsor active</span>
+                    <span className="text-[10px] text-atlas-positive font-semibold">Strong</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1">
+                    <span className="text-xs text-foreground">New department interest</span>
+                    <span className="text-[10px] text-atlas-warning font-semibold">Moderate</span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground">Insufficient signals for expansion recommendation. Focus on deepening current adoption.</p>
+              )}
+            </DrilldownSection>
+          </>
+        )}
+      </DrilldownDrawer>
     </div>
   );
 }

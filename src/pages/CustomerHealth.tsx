@@ -3,9 +3,13 @@ import { WidgetCard } from "@/components/atlas/WidgetCard";
 import { PageHeader } from "@/components/atlas/PageHeader";
 import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
+import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
 import { healthScores, cohortRetention } from "@/lib/mock-data";
+import { useState } from "react";
 
 export default function CustomerHealth() {
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);
+
   const renewalCalendar = [
     { month: "Apr", count: 8, revenue: 680000, atRisk: 2 },
     { month: "May", count: 12, revenue: 920000, atRisk: 3 },
@@ -52,6 +56,7 @@ export default function CustomerHealth() {
               )},
             ]}
             data={healthScores as any}
+            onRowClick={(row: any) => setSelectedAccount(row)}
           />
         </WidgetCard>
 
@@ -123,7 +128,7 @@ export default function CustomerHealth() {
         <WidgetCard title="Expansion Opportunities" span={4}>
           <div className="space-y-2">
             {healthScores.filter(a => a.score >= 75).map(account => (
-              <div key={account.account} className="rounded border border-atlas-success/30 bg-atlas-success/5 p-2.5">
+              <div key={account.account} className="rounded border border-atlas-success/30 bg-atlas-success/5 p-2.5 cursor-pointer hover:bg-atlas-success/10 transition-colors" onClick={() => setSelectedAccount(account)}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-foreground">{account.account}</span>
                   <span className="font-metric text-[10px] text-atlas-positive">{account.score} health</span>
@@ -137,6 +142,53 @@ export default function CustomerHealth() {
           </div>
         </WidgetCard>
       </div>
+
+      <DrilldownDrawer
+        open={!!selectedAccount}
+        onClose={() => setSelectedAccount(null)}
+        title={selectedAccount?.account ?? ""}
+        subtitle={`Health: ${selectedAccount?.score} · ${selectedAccount?.risk} risk`}
+      >
+        {selectedAccount && (
+          <>
+            <DrilldownSection label="Account Overview">
+              <DrilldownMetric label="ARR" value={`$${(selectedAccount.revenue / 1000).toFixed(0)}K`} delta={6} />
+              <DrilldownMetric label="Health Score" value={selectedAccount.score.toString()} delta={selectedAccount.trend === "up" ? 4 : selectedAccount.trend === "down" ? -8 : 0} />
+              <DrilldownMetric label="Trend" value={selectedAccount.trend === "up" ? "↑ Improving" : selectedAccount.trend === "down" ? "↓ Declining" : "→ Stable"} />
+              <DrilldownMetric label="Renewal Date" value={selectedAccount.renewal} />
+              <DrilldownMetric label="Risk" value={selectedAccount.risk} />
+            </DrilldownSection>
+            <DrilldownSection label="Health Drivers">
+              {[
+                { driver: "Product Usage", score: selectedAccount.score >= 75 ? 85 : 42, status: selectedAccount.score >= 75 ? "healthy" : "critical" },
+                { driver: "Support Tickets", score: selectedAccount.score >= 75 ? 92 : 38, status: selectedAccount.score >= 75 ? "healthy" : "warning" },
+                { driver: "Stakeholder Engagement", score: selectedAccount.score >= 60 ? 78 : 25, status: selectedAccount.score >= 60 ? "healthy" : "critical" },
+                { driver: "Feature Adoption", score: selectedAccount.score >= 70 ? 70 : 55, status: selectedAccount.score >= 70 ? "healthy" : "warning" },
+              ].map((d, i) => (
+                <div key={i} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
+                  <span className="text-xs text-foreground">{d.driver}</span>
+                  <span className={`font-metric text-xs font-semibold ${
+                    d.status === "healthy" ? "text-atlas-positive" : d.status === "warning" ? "text-atlas-warning" : "text-atlas-negative"
+                  }`}>{d.score}</span>
+                </div>
+              ))}
+            </DrilldownSection>
+            <DrilldownSection label="Recent Activity">
+              {[
+                { action: "QBR completed", date: "Mar 10" },
+                { action: "New users onboarded (3)", date: "Mar 3" },
+                { action: "Support ticket resolved", date: "Feb 28" },
+                { action: "Feature request submitted", date: "Feb 20" },
+              ].map((a, i) => (
+                <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
+                  <span className="text-xs text-foreground">{a.action}</span>
+                  <span className="text-[10px] text-muted-foreground">{a.date}</span>
+                </div>
+              ))}
+            </DrilldownSection>
+          </>
+        )}
+      </DrilldownDrawer>
     </div>
   );
 }
