@@ -3,7 +3,9 @@ import { WidgetCard } from "@/components/atlas/WidgetCard";
 import { PageHeader } from "@/components/atlas/PageHeader";
 import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
+import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
 import { segmentPerformance } from "@/lib/mock-data";
+import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ScatterChart, Scatter, ZAxis } from "recharts";
 
 const chartTooltipStyle = {
@@ -26,6 +28,8 @@ const scatterData = segmentPerformance.map((s) => ({
 }));
 
 export default function SegmentEconomics() {
+  const [selectedSegment, setSelectedSegment] = useState<any>(null);
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <PageHeader title="Segment Economics" description="Who actually makes money — LTV, CAC, retention, and profitability by segment." />
@@ -56,6 +60,7 @@ export default function SegmentEconomics() {
               )},
             ]}
             data={segmentPerformance as any}
+            onRowClick={(row: any) => setSelectedSegment(row)}
           />
         </WidgetCard>
 
@@ -100,6 +105,48 @@ export default function SegmentEconomics() {
           </ResponsiveContainer>
         </WidgetCard>
       </div>
+
+      <DrilldownDrawer
+        open={!!selectedSegment}
+        onClose={() => setSelectedSegment(null)}
+        title={`${selectedSegment?.segment ?? ""} Segment`}
+        subtitle="Segment Economics Detail"
+      >
+        {selectedSegment && (() => {
+          const prof = profitabilityData.find(p => p.segment === selectedSegment.segment);
+          return (
+            <>
+              <DrilldownSection label="Revenue Metrics">
+                <DrilldownMetric label="ARR" value={`$${(selectedSegment.arr / 1000).toFixed(0)}K`} delta={8} />
+                <DrilldownMetric label="LTV" value={`$${(selectedSegment.ltv / 1000).toFixed(0)}K`} />
+                <DrilldownMetric label="CAC" value={`$${(selectedSegment.cac / 1000).toFixed(1)}K`} />
+                <DrilldownMetric label="LTV/CAC" value={`${(selectedSegment.ltv / selectedSegment.cac).toFixed(1)}x`} />
+                <DrilldownMetric label="Churn Rate" value={`${selectedSegment.churn}%`} delta={-selectedSegment.churn} />
+              </DrilldownSection>
+              <DrilldownSection label="Profitability">
+                <DrilldownMetric label="Gross Margin" value={`${prof?.margin ?? 0}%`} />
+                <DrilldownMetric label="Support Burden" value={`${prof?.supportBurden ?? 0}%`} />
+                <DrilldownMetric label="Strategic Fit" value={`${prof?.strategicFit ?? 0}/100`} />
+              </DrilldownSection>
+              <DrilldownSection label="Top Accounts">
+                {[
+                  { name: "Account Alpha", arr: "$120K", health: 88 },
+                  { name: "Account Beta", arr: "$95K", health: 72 },
+                  { name: "Account Gamma", arr: "$78K", health: 91 },
+                ].map((a, i) => (
+                  <div key={i} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
+                    <span className="text-xs text-foreground">{a.name}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-metric text-xs text-foreground">{a.arr}</span>
+                      <span className={`font-metric text-[10px] ${a.health >= 80 ? "text-atlas-positive" : "text-atlas-warning"}`}>{a.health}</span>
+                    </div>
+                  </div>
+                ))}
+              </DrilldownSection>
+            </>
+          );
+        })()}
+      </DrilldownDrawer>
     </div>
   );
 }

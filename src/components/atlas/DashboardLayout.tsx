@@ -1,12 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { TopNav } from "@/components/atlas/TopNav";
 import { AppSidebar } from "@/components/atlas/AppSidebar";
 import { InsightRail } from "@/components/atlas/InsightRail";
+import { AnimatedPage } from "@/components/atlas/AnimatedPage";
 import { useState } from "react";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 export function DashboardLayout() {
   const [railOpen, setRailOpen] = useState(true);
+  const location = useLocation();
 
   return (
     <div className="flex h-screen flex-col bg-background overflow-hidden">
@@ -14,7 +17,11 @@ export function DashboardLayout() {
       <div className="flex flex-1 overflow-hidden">
         <AppSidebar />
         <main className="flex-1 overflow-y-auto">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <AnimatedPage key={location.pathname}>
+              <Outlet />
+            </AnimatedPage>
+          </AnimatePresence>
         </main>
         <button
           onClick={() => setRailOpen(!railOpen)}

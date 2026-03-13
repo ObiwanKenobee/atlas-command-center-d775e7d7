@@ -3,8 +3,10 @@ import { WidgetCard } from "@/components/atlas/WidgetCard";
 import { PageHeader } from "@/components/atlas/PageHeader";
 import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
+import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
 import { campaignData, leadsBySource, funnelData } from "@/lib/mock-data";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const chartTooltipStyle = {
   contentStyle: { background: "hsl(220, 18%, 10%)", border: "1px solid hsl(220, 16%, 18%)", borderRadius: "8px", fontSize: "12px" },
@@ -12,6 +14,8 @@ const chartTooltipStyle = {
 };
 
 export default function DemandEngine() {
+  const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <PageHeader title="Demand Engine" description="Marketing performance, lead quality, and channel attribution." />
@@ -81,9 +85,51 @@ export default function DemandEngine() {
               )},
             ]}
             data={campaignData as any}
+            onRowClick={(row: any) => setSelectedCampaign(row)}
           />
         </WidgetCard>
       </div>
+
+      <DrilldownDrawer
+        open={!!selectedCampaign}
+        onClose={() => setSelectedCampaign(null)}
+        title={selectedCampaign?.name ?? ""}
+        subtitle="Campaign Performance Detail"
+      >
+        {selectedCampaign && (
+          <>
+            <DrilldownSection label="Campaign Metrics">
+              <DrilldownMetric label="Total Spend" value={`$${(selectedCampaign.spend / 1000).toFixed(0)}K`} />
+              <DrilldownMetric label="Leads Generated" value={selectedCampaign.leads.toString()} />
+              <DrilldownMetric label="MQLs" value={selectedCampaign.mqls.toString()} />
+              <DrilldownMetric label="SQLs" value={selectedCampaign.sqls.toString()} />
+              <DrilldownMetric label="Pipeline Created" value={`$${(selectedCampaign.pipeline / 1000).toFixed(0)}K`} />
+              <DrilldownMetric label="ROI" value={`${selectedCampaign.roi}x`} delta={selectedCampaign.roi >= 15 ? 12 : -5} />
+            </DrilldownSection>
+            <DrilldownSection label="Conversion Rates">
+              <DrilldownMetric label="Lead → MQL" value={`${((selectedCampaign.mqls / selectedCampaign.leads) * 100).toFixed(1)}%`} />
+              <DrilldownMetric label="MQL → SQL" value={`${((selectedCampaign.sqls / selectedCampaign.mqls) * 100).toFixed(1)}%`} />
+              <DrilldownMetric label="Cost per Lead" value={`$${(selectedCampaign.spend / selectedCampaign.leads).toFixed(0)}`} />
+              <DrilldownMetric label="Cost per SQL" value={`$${(selectedCampaign.spend / selectedCampaign.sqls).toFixed(0)}`} />
+            </DrilldownSection>
+            <DrilldownSection label="Top Opportunities Sourced">
+              {[
+                { opp: "Enterprise Cloud Deal", value: "$280K", stage: "Negotiation" },
+                { opp: "Mid-Market Expansion", value: "$95K", stage: "Proposal" },
+                { opp: "New Logo — FinTech", value: "$150K", stage: "Discovery" },
+              ].map((o, i) => (
+                <div key={i} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
+                  <div>
+                    <span className="text-xs text-foreground">{o.opp}</span>
+                    <span className="ml-2 text-[10px] text-muted-foreground">{o.stage}</span>
+                  </div>
+                  <span className="font-metric text-xs text-foreground">{o.value}</span>
+                </div>
+              ))}
+            </DrilldownSection>
+          </>
+        )}
+      </DrilldownDrawer>
     </div>
   );
 }
