@@ -65,6 +65,17 @@
   }
 }
 
+@keyframes atlas-anomaly-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--atlas-danger) / 0.5), 0 0 0 1px hsl(var(--atlas-danger) / 0.6);
+    border-color: hsl(var(--atlas-danger) / 0.7);
+  }
+  50% {
+    box-shadow: 0 0 24px 2px hsl(var(--atlas-danger) / 0.35), 0 0 0 1px hsl(var(--atlas-danger) / 0.9);
+    border-color: hsl(var(--atlas-danger));
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -115,6 +126,10 @@
 
   .atlas-filter-bar {
     @apply flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-4 py-2;
+  }
+
+  .atlas-anomaly-pulse {
+    animation: atlas-anomaly-pulse 2s ease-in-out infinite;
   }
 
   /* Custom scrollbar */

@@ -2,10 +2,13 @@ import { Search, Bell, ChevronDown, Calendar, Bookmark, User } from "lucide-reac
 import { useRole, roleLabels, UserRole } from "@/lib/roles";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
+import { CommandPalette, useCommandPaletteHotkey } from "@/components/atlas/CommandPalette";
 
 export function TopNav() {
   const { role, setRole } = useRole();
   const [roleOpen, setRoleOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  useCommandPaletteHotkey(setPaletteOpen);
 
   return (
     <header className="flex h-12 items-center justify-between border-b border-border bg-atlas-surface-1 px-4">
@@ -30,11 +33,14 @@ export function TopNav() {
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 rounded-md border border-border bg-secondary px-2.5 py-1">
+        <button
+          onClick={() => setPaletteOpen(true)}
+          className="flex items-center gap-2 rounded-md border border-border bg-secondary px-2.5 py-1 text-xs hover:bg-accent"
+        >
           <Search className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">Search…</span>
+          <span className="text-muted-foreground">Search…</span>
           <kbd className="rounded border border-border bg-atlas-surface-0 px-1 py-0.5 font-metric text-[10px] text-muted-foreground">⌘K</kbd>
-        </div>
+        </button>
 
         <button className="rounded p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground">
           <Bookmark className="h-4 w-4" />
@@ -75,6 +81,7 @@ export function TopNav() {
           </PopoverContent>
         </Popover>
       </div>
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </header>
   );
 }
