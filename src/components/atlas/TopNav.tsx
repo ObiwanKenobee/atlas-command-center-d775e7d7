@@ -81,6 +81,7 @@ export function TopNav() {
           </PopoverContent>
         </Popover>
       </div>
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </header>
   );
 }
