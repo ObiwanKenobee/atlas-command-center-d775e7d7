@@ -30,12 +30,12 @@ export default function PipelineIntelligence() {
       <FilterBar />
 
       <div className="atlas-kpi-ribbon">
-        <KPICard title="Open Pipeline" value="$6.8M" delta={5.2} sparkData={[52, 56, 58, 62, 65, 64, 66, 68, 68]} quality="high" />
-        <KPICard title="Weighted Pipeline" value="$3.4M" delta={-2.1} quality="medium" tooltip="Pipeline adjusted by stage probability" />
-        <KPICard title="Win Rate" value="26.2%" delta={1.8} quality="medium" />
-        <KPICard title="Avg Sales Cycle" value="48 days" delta={-3.5} quality="high" />
-        <KPICard title="Slipped Deals" value="$1.2M" delta={15} quality="low" tooltip="Deals that moved past close date" />
-        <KPICard title="Created This Month" value="42" delta={8.2} quality="high" />
+        <KPICard title="Open Pipeline" value="$6.8M" delta={5.2} sparkData={[52, 56, 58, 62, 65, 64, 66, 68, 68]} quality="high" anomalyThreshold={10} anomalyDirection="negative" />
+        <KPICard title="Weighted Pipeline" value="$3.4M" delta={-2.1} quality="medium" tooltip="Pipeline adjusted by stage probability" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Win Rate" value="26.2%" delta={1.8} quality="medium" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Avg Sales Cycle" value="48 days" delta={-3.5} quality="high" anomalyThreshold={10} anomalyDirection="positive" />
+        <KPICard title="Slipped Deals" value="$1.2M" delta={15} quality="low" tooltip="Deals that moved past close date" anomalyThreshold={10} anomalyDirection="positive" />
+        <KPICard title="Created This Month" value="42" delta={8.2} quality="high" anomalyThreshold={15} anomalyDirection="negative" />
       </div>
 
       <div className="atlas-grid">

@@ -25,13 +25,13 @@ export default function ExecutiveCommand() {
       <FilterBar />
 
       <div className="atlas-kpi-ribbon">
-        <KPICard title="ARR" value="$5.8M" delta={12.4} deltaLabel="vs prev Q" sparkData={[24, 28, 32, 36, 41, 45, 49, 52, 58]} prefix="" quality="high" tooltip="Annual Recurring Revenue" />
-        <KPICard title="New Revenue" value="$1.2M" delta={18.2} sparkData={[8, 12, 10, 14, 16, 15, 18, 20, 22]} quality="high" />
-        <KPICard title="Expansion" value="$680K" delta={8.5} sparkData={[40, 45, 42, 50, 55, 52, 58, 62, 68]} quality="medium" />
-        <KPICard title="Churned" value="$320K" delta={-4.2} sparkData={[30, 28, 35, 32, 38, 34, 30, 28, 32]} quality="medium" />
-        <KPICard title="NRR" value="112%" delta={3.1} quality="high" tooltip="Net Revenue Retention" />
-        <KPICard title="Pipeline Coverage" value="3.2x" delta={-8} quality="medium" tooltip="Pipeline / Quota remaining" />
-        <KPICard title="Forecast Confidence" value="72%" delta={-6} quality="low" />
+        <KPICard title="ARR" value="$5.8M" delta={12.4} deltaLabel="vs prev Q" sparkData={[24, 28, 32, 36, 41, 45, 49, 52, 58]} prefix="" quality="high" tooltip="Annual Recurring Revenue" anomalyThreshold={20} anomalyDirection="negative" />
+        <KPICard title="New Revenue" value="$1.2M" delta={18.2} sparkData={[8, 12, 10, 14, 16, 15, 18, 20, 22]} quality="high" anomalyThreshold={25} anomalyDirection="negative" />
+        <KPICard title="Expansion" value="$680K" delta={8.5} sparkData={[40, 45, 42, 50, 55, 52, 58, 62, 68]} quality="medium" anomalyThreshold={15} anomalyDirection="negative" />
+        <KPICard title="Churned" value="$320K" delta={-4.2} sparkData={[30, 28, 35, 32, 38, 34, 30, 28, 32]} quality="medium" anomalyThreshold={10} anomalyDirection="negative" />
+        <KPICard title="NRR" value="112%" delta={3.1} quality="high" tooltip="Net Revenue Retention" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Pipeline Coverage" value="3.2x" delta={-8} quality="medium" tooltip="Pipeline / Quota remaining" anomalyThreshold={15} anomalyDirection="negative" />
+        <KPICard title="Forecast Confidence" value="72%" delta={-6} quality="low" anomalyThreshold={10} anomalyDirection="negative" />
       </div>
 
       <div className="atlas-grid">
