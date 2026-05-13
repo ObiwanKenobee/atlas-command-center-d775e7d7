@@ -41,7 +41,7 @@ export function KPICard({ title, value, delta, deltaLabel, sparkData, quality, t
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`atlas-panel min-w-[180px] flex-1 flex flex-col gap-2 ${isAnomaly ? "atlas-anomaly-pulse" : ""}`}
+      className={`atlas-panel group min-w-[180px] flex-1 flex flex-col gap-2 relative ${isAnomaly ? "atlas-anomaly-pulse" : ""}`}
     >
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{title}</span>
@@ -51,7 +51,7 @@ export function KPICard({ title, value, delta, deltaLabel, sparkData, quality, t
               <TooltipTrigger>
                 <AlertTriangle className="h-3 w-3 text-atlas-danger" />
               </TooltipTrigger>
-              <TooltipContent>Anomaly: {delta}% deviation exceeds {anomalyThreshold}% threshold</TooltipContent>
+              <TooltipContent>Anomaly: {delta}% deviation exceeds {currentThreshold}% threshold</TooltipContent>
             </Tooltip>
           )}
           {quality && (
@@ -69,6 +69,33 @@ export function KPICard({ title, value, delta, deltaLabel, sparkData, quality, t
               <TooltipContent>{tooltip}</TooltipContent>
             </Tooltip>
           )}
+          
+          <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
+            <PopoverTrigger asChild>
+              <button className="opacity-0 group-hover:opacity-100 transition-opacity rounded p-1 hover:bg-secondary text-muted-foreground hover:text-foreground">
+                <Settings2 className="h-3 w-3" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-3" align="end" onClick={(e) => e.stopPropagation()}>
+              <div className="space-y-3">
+                <div>
+                  <h4 className="font-medium text-sm">Anomaly Sensitivity</h4>
+                  <p className="text-xs text-muted-foreground">Alert when deviation exceeds this threshold.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="50" 
+                    value={currentThreshold}
+                    onChange={(e) => updateAnomalyThreshold(title, Number(e.target.value))}
+                    className="flex-1"
+                  />
+                  <span className="font-metric text-sm w-8 text-right">{currentThreshold}%</span>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
