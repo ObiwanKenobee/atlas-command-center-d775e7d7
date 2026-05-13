@@ -36,11 +36,11 @@ export default function SegmentEconomics() {
       <FilterBar />
 
       <div className="atlas-kpi-ribbon">
-        <KPICard title="LTV/CAC Ratio" value="12.4x" delta={8.2} quality="high" tooltip="Lifetime Value / Customer Acquisition Cost" />
-        <KPICard title="Avg ACV" value="$48K" delta={5.1} quality="high" />
-        <KPICard title="Retention Rate" value="91.2%" delta={1.2} quality="high" />
-        <KPICard title="Gross Margin" value="67%" delta={-2.1} quality="medium" />
-        <KPICard title="Blended CAC" value="$9.2K" delta={-4.5} quality="medium" />
+        <KPICard title="LTV/CAC Ratio" value="12.4x" delta={8.2} quality="high" tooltip="Lifetime Value / Customer Acquisition Cost" anomalyThreshold={10} anomalyDirection="negative" />
+        <KPICard title="Avg ACV" value="$48K" delta={5.1} quality="high" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Retention Rate" value="91.2%" delta={1.2} quality="high" anomalyThreshold={2} anomalyDirection="negative" />
+        <KPICard title="Gross Margin" value="67%" delta={-2.1} quality="medium" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Blended CAC" value="$9.2K" delta={-4.5} quality="medium" anomalyThreshold={5} anomalyDirection="positive" />
       </div>
 
       <div className="atlas-grid">

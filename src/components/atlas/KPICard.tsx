@@ -13,8 +13,8 @@ interface KPICardProps {
   prefix?: string;
   /** Absolute % delta beyond which the card pulses as an anomaly. Default 15. */
   anomalyThreshold?: number;
-  /** "negative" (default) flags only large drops; "any" flags both directions. */
-  anomalyDirection?: "negative" | "any";
+  /** "negative" (default) flags large drops; "positive" flags large gains; "any" flags both directions. */
+  anomalyDirection?: "negative" | "positive" | "any";
 }
 
 export function KPICard({ title, value, delta, deltaLabel, sparkData, quality, tooltip, prefix, anomalyThreshold = 15, anomalyDirection = "negative" }: KPICardProps) {
@@ -25,6 +25,8 @@ export function KPICard({ title, value, delta, deltaLabel, sparkData, quality, t
     delta !== undefined &&
     (anomalyDirection === "any"
       ? Math.abs(delta) >= anomalyThreshold
+      : anomalyDirection === "positive"
+      ? delta >= anomalyThreshold
       : delta <= -anomalyThreshold);
 
   return (

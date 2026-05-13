@@ -39,11 +39,11 @@ export default function ExpansionSignals() {
       <FilterBar />
 
       <div className="atlas-kpi-ribbon">
-        <KPICard title="Avg Modules/Account" value="2.5" delta={12} quality="medium" />
-        <KPICard title="Expansion Readiness" value="62%" delta={8.4} quality="medium" tooltip="% of accounts scoring >70 on readiness" />
-        <KPICard title="Multi-Module Rate" value="58%" delta={15} quality="high" />
-        <KPICard title="Stakeholder Density" value="6.3" delta={4.2} quality="medium" tooltip="Avg engaged stakeholders per account" />
-        <KPICard title="Expansion Pipeline" value="$1.8M" delta={22} quality="high" />
+        <KPICard title="Avg Modules/Account" value="2.5" delta={12} quality="medium" anomalyThreshold={15} anomalyDirection="negative" />
+        <KPICard title="Expansion Readiness" value="62%" delta={8.4} quality="medium" tooltip="% of accounts scoring >70 on readiness" anomalyThreshold={10} anomalyDirection="negative" />
+        <KPICard title="Multi-Module Rate" value="58%" delta={15} quality="high" anomalyThreshold={10} anomalyDirection="negative" />
+        <KPICard title="Stakeholder Density" value="6.3" delta={4.2} quality="medium" tooltip="Avg engaged stakeholders per account" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Expansion Pipeline" value="$1.8M" delta={22} quality="high" anomalyThreshold={20} anomalyDirection="negative" />
       </div>
 
       <div className="atlas-grid">

@@ -24,12 +24,12 @@ export default function CustomerHealth() {
       <FilterBar />
 
       <div className="atlas-kpi-ribbon">
-        <KPICard title="Health Score Avg" value="74" delta={-2.1} quality="medium" tooltip="Weighted average across all accounts" />
-        <KPICard title="Renewal Rate" value="91.2%" delta={0.8} quality="high" />
-        <KPICard title="Churn Rate" value="4.8%" delta={-1.2} quality="medium" />
-        <KPICard title="NRR" value="112%" delta={3.1} quality="high" />
-        <KPICard title="Renewals (90d)" value="$2.1M" delta={0} quality="medium" tooltip="Revenue up for renewal in next 90 days" />
-        <KPICard title="At-Risk Accounts" value="5" delta={25} quality="low" />
+        <KPICard title="Health Score Avg" value="74" delta={-2.1} quality="medium" tooltip="Weighted average across all accounts" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Renewal Rate" value="91.2%" delta={0.8} quality="high" anomalyThreshold={3} anomalyDirection="negative" />
+        <KPICard title="Churn Rate" value="4.8%" delta={-1.2} quality="medium" anomalyThreshold={2} anomalyDirection="positive" />
+        <KPICard title="NRR" value="112%" delta={3.1} quality="high" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="Renewals (90d)" value="$2.1M" delta={0} quality="medium" tooltip="Revenue up for renewal in next 90 days" anomalyThreshold={15} anomalyDirection="negative" />
+        <KPICard title="At-Risk Accounts" value="5" delta={25} quality="low" anomalyThreshold={20} anomalyDirection="positive" />
       </div>
 
       <div className="atlas-grid">

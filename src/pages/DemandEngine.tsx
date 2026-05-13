@@ -22,12 +22,12 @@ export default function DemandEngine() {
       <FilterBar />
 
       <div className="atlas-kpi-ribbon">
-        <KPICard title="Total Leads" value="4,200" delta={14.2} sparkData={[320, 340, 380, 400, 420, 410, 440, 460, 480]} quality="high" />
-        <KPICard title="MQLs" value="1,680" delta={22.5} sparkData={[120, 130, 145, 150, 160, 155, 170, 175, 180]} quality="high" />
-        <KPICard title="SQLs" value="756" delta={18.8} quality="high" />
-        <KPICard title="Lead Velocity" value="+12%" delta={4.5} quality="medium" tooltip="Month-over-month lead growth rate" />
-        <KPICard title="CAC" value="$4,200" delta={-6.3} quality="medium" tooltip="Customer Acquisition Cost" />
-        <KPICard title="Pipeline Created" value="$2.9M" delta={28.4} quality="high" />
+        <KPICard title="Total Leads" value="4,200" delta={14.2} sparkData={[320, 340, 380, 400, 420, 410, 440, 460, 480]} quality="high" anomalyThreshold={15} anomalyDirection="negative" />
+        <KPICard title="MQLs" value="1,680" delta={22.5} sparkData={[120, 130, 145, 150, 160, 155, 170, 175, 180]} quality="high" anomalyThreshold={20} anomalyDirection="negative" />
+        <KPICard title="SQLs" value="756" delta={18.8} quality="high" anomalyThreshold={15} anomalyDirection="negative" />
+        <KPICard title="Lead Velocity" value="+12%" delta={4.5} quality="medium" tooltip="Month-over-month lead growth rate" anomalyThreshold={5} anomalyDirection="negative" />
+        <KPICard title="CAC" value="$4,200" delta={-6.3} quality="medium" tooltip="Customer Acquisition Cost" anomalyThreshold={5} anomalyDirection="positive" />
+        <KPICard title="Pipeline Created" value="$2.9M" delta={28.4} quality="high" anomalyThreshold={20} anomalyDirection="negative" />
       </div>
 
       <div className="atlas-grid">
