@@ -51,9 +51,9 @@ interface Props {
 export function CommandPalette({ open, onOpenChange }: Props) {
   const navigate = useNavigate();
 
-  const go = (path: string) => {
+  const go = (path: string, state?: any) => {
     onOpenChange(false);
-    navigate(path);
+    navigate(path, { state });
   };
 
   return (
@@ -73,7 +73,7 @@ export function CommandPalette({ open, onOpenChange }: Props) {
 
         <CommandGroup heading="Accounts">
           {healthScores.map((a) => (
-            <CommandItem key={a.account} onSelect={() => go("/health")} value={`acct account ${a.account} health score ${a.score} risk ${a.risk}`}>
+            <CommandItem key={a.account} onSelect={() => go("/health", { openAccount: a.account })} value={`acct account ${a.account} health score ${a.score} risk ${a.risk}`}>
               <Building2 className="mr-2 h-4 w-4 text-muted-foreground" />
               <span>{a.account}</span>
               <span className="ml-auto font-metric text-xs text-muted-foreground">Health {a.score}</span>
@@ -83,7 +83,7 @@ export function CommandPalette({ open, onOpenChange }: Props) {
 
         <CommandGroup heading="Reps & Deals">
           {repPerformance.map((r) => (
-            <CommandItem key={r.name} onSelect={() => go("/pipeline")} value={`deal rep ${r.name} pipeline ${r.pipeline} quota ${r.quota}`}>
+            <CommandItem key={r.name} onSelect={() => go("/pipeline", { openRep: r.name })} value={`deal rep ${r.name} pipeline ${r.pipeline} quota ${r.quota}`}>
               <Target className="mr-2 h-4 w-4 text-muted-foreground" />
               <span>{r.name}</span>
               <span className="ml-auto font-metric text-xs text-muted-foreground">
@@ -95,7 +95,7 @@ export function CommandPalette({ open, onOpenChange }: Props) {
 
         <CommandGroup heading="Campaigns">
           {campaignData.map((c) => (
-            <CommandItem key={c.name} onSelect={() => go("/demand")} value={`camp campaign ${c.name} roi ${c.roi}`}>
+            <CommandItem key={c.name} onSelect={() => go("/demand", { openCampaign: c.name })} value={`camp campaign ${c.name} roi ${c.roi}`}>
               <Megaphone className="mr-2 h-4 w-4 text-muted-foreground" />
               <span>{c.name}</span>
               <span className="ml-auto font-metric text-xs text-muted-foreground">{c.roi}x ROI</span>

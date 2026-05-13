@@ -1,6 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { X } from "lucide-react";
+import { X, RotateCcw } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
+import { useFilters } from "@/lib/filters";
 
 interface DrilldownDrawerProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface DrilldownDrawerProps {
 }
 
 export function DrilldownDrawer({ open, onClose, title, subtitle, children }: DrilldownDrawerProps) {
+  const { clearFilters } = useFilters();
   const [cached, setCached] = useState({ title, subtitle, children });
 
   useEffect(() => {
@@ -27,8 +29,22 @@ export function DrilldownDrawer({ open, onClose, title, subtitle, children }: Dr
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-[520px] sm:max-w-[520px] bg-card border-border overflow-y-auto">
         <SheetHeader className="mb-4">
-          <SheetTitle className="text-foreground">{displayTitle}</SheetTitle>
-          {displaySubtitle && <SheetDescription className="text-muted-foreground">{displaySubtitle}</SheetDescription>}
+          <div className="flex items-start justify-between">
+            <div>
+              <SheetTitle className="text-foreground">{displayTitle}</SheetTitle>
+              {displaySubtitle && <SheetDescription className="text-muted-foreground">{displaySubtitle}</SheetDescription>}
+            </div>
+            <button
+              onClick={() => {
+                clearFilters();
+                onClose();
+              }}
+              className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-1 text-[10px] font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Reset View
+            </button>
+          </div>
         </SheetHeader>
         <div className="flex flex-col gap-4">{displayChildren}</div>
       </SheetContent>

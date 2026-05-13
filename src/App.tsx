@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { DashboardLayout } from "@/components/atlas/DashboardLayout";
 import { RoleProvider } from "@/lib/roles";
 import { FilterProvider } from "@/lib/filters";
+import { SettingsProvider } from "@/lib/settings";
 import ExecutiveCommand from "./pages/ExecutiveCommand";
 import DemandEngine from "./pages/DemandEngine";
 import PipelineIntelligence from "./pages/PipelineIntelligence";
@@ -24,8 +25,9 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <RoleProvider>
-        <FilterProvider>
+      <SettingsProvider>
+        <RoleProvider>
+          <FilterProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -46,8 +48,9 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
-        </FilterProvider>
-      </RoleProvider>
+          </FilterProvider>
+        </RoleProvider>
+      </SettingsProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

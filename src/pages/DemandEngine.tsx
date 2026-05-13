@@ -5,7 +5,8 @@ import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
 import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
 import { campaignData, leadsBySource, funnelData } from "@/lib/mock-data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const chartTooltipStyle = {
@@ -15,6 +16,15 @@ const chartTooltipStyle = {
 
 export default function DemandEngine() {
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openCampaign) {
+      const camp = campaignData.find(c => c.name === location.state.openCampaign);
+      if (camp) setSelectedCampaign(camp);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   return (
     <div className="flex flex-col gap-4 p-4">

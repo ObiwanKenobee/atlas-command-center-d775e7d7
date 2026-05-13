@@ -5,7 +5,8 @@ import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
 import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
 import { pipelineByStage, repPerformance } from "@/lib/mock-data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const chartTooltipStyle = {
@@ -23,6 +24,15 @@ const staleDeals = [
 export default function PipelineIntelligence() {
   const [selectedRep, setSelectedRep] = useState<any>(null);
   const [selectedDeal, setSelectedDeal] = useState<any>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openRep) {
+      const rep = repPerformance.find(r => r.name === location.state.openRep);
+      if (rep) setSelectedRep(rep);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   return (
     <div className="flex flex-col gap-4 p-4">
