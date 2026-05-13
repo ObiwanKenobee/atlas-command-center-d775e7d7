@@ -5,10 +5,21 @@ import { FilterBar } from "@/components/atlas/FilterBar";
 import { DataTable } from "@/components/atlas/DataTable";
 import { DrilldownDrawer, DrilldownSection, DrilldownMetric } from "@/components/atlas/DrilldownDrawer";
 import { healthScores, cohortRetention } from "@/lib/mock-data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function CustomerHealth() {
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openAccount) {
+      const acc = healthScores.find(a => a.account === location.state.openAccount);
+      if (acc) setSelectedAccount(acc);
+      // clear state so it doesn't reopen on subsequent navigation within the same page
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const renewalCalendar = [
     { month: "Apr", count: 8, revenue: 680000, atRisk: 2 },
