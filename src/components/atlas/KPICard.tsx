@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, Minus, Info, AlertTriangle } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Info, AlertTriangle, Settings2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useSettings } from "@/lib/settings";
+import { useState } from "react";
 
 interface KPICardProps {
   title: string;
@@ -18,16 +21,20 @@ interface KPICardProps {
 }
 
 export function KPICard({ title, value, delta, deltaLabel, sparkData, quality, tooltip, prefix, anomalyThreshold = 15, anomalyDirection = "negative" }: KPICardProps) {
+  const { getAnomalyThreshold, updateAnomalyThreshold } = useSettings();
+  const currentThreshold = getAnomalyThreshold(title, anomalyThreshold);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   const isPositive = delta && delta > 0;
   const isNegative = delta && delta < 0;
 
   const isAnomaly =
     delta !== undefined &&
     (anomalyDirection === "any"
-      ? Math.abs(delta) >= anomalyThreshold
+      ? Math.abs(delta) >= currentThreshold
       : anomalyDirection === "positive"
-      ? delta >= anomalyThreshold
-      : delta <= -anomalyThreshold);
+      ? delta >= currentThreshold
+      : delta <= -currentThreshold);
 
   return (
     <motion.div
